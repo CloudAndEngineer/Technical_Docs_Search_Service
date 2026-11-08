@@ -1,0 +1,28 @@
+chat-api/
+src/
+├── main/
+│   ├── java/com/example/rag/chat/ (또는 python/app/)
+│   │   ├── controller/          # [Presentation Layer] HTTP REST API 컨트롤러
+│   │   │   ├── ChatController.java       # POST /api/v1/sessions/{id}/chat
+│   │   │   └── SessionController.java    # POST /api/v1/sessions
+│   │   │
+│   │   ├── service/             # [Business Logic Layer] RAG 오케스트레이션
+│   │   │   ├── ChatService.java          # 질문 벡터화 -> Vector Search -> Prompt 구성 -> Gemini 호출
+│   │   │   ├── SessionService.java       # 세션 생성/검증
+│   │   │   └── GeminiClientService.java  # Gemini API 통신 및 Rate Limit/Retry 처리
+│   │   │
+│   │   ├── client/              # [External Interface Layer] 타 서비스 통신
+│   │   │   └── VectorDbClient.java       # Vector DB (Qdrant/Milvus) 검색 클라이언트
+│   │   │
+│   │   ├── dto/                 # [Data Transfer Objects]
+│   │   │   ├── request/                  # ChatRequestDto, SessionCreateDto
+│   │   │   └── response/                 # ChatResponseDto (답변 + 출처 목록)
+│   │   │
+│   │   └── exception/           # [Exception Handling]
+│   │       ├── GlobalExceptionHandler.java
+│   │       └── ChatException.java
+│   │
+│   └── resources/
+│       ├── application.yml      # App 설정 (Gemini Key, Threshold 설정 등)
+│       └── prompts/             # System Prompt 템플릿 파일 (.st / .txt)
+└── test/                        # 단위 및 통합 테스트 (JUnit5, Mockito)
