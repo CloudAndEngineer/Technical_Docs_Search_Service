@@ -1,0 +1,25 @@
+ingestion-worker/
+src/
+├── main/
+│   ├── java/com/example/rag/ingestion/
+│   │   ├── consumer/            # [Message Listener] 메시지 큐 수신기 (RabbitMQ/Kafka/Redis Stream)
+│   │   │   └── DocumentIngestionConsumer.java
+│   │   │
+│   │   ├── parser/              # [Document Parsing] 문서 종류별 파서
+│   │   │   ├── PdfDocumentParser.java
+│   │   │   ├── MarkdownParser.java
+│   │   │   └── TextParser.java
+│   │   │
+│   │   ├── chunker/             # [Text Chunking Strategy]
+│   │   │   └── FixedSizeOverlapChunker.java
+│   │   │
+│   │   ├── service/             # [Processing Pipeline]
+│   │   │   ├── IngestionPipelineService.java  # 파싱 -> 청킹 -> 임베딩 -> Vector DB 저장
+│   │   │   └── EmbeddingService.java          # Gemini Embedding API 호출
+│   │   │
+│   │   └── repository/          # Vector DB 접근 및 저장 레포지토리
+│   │       └── VectorRepository.java
+│   │
+│   └── resources/
+│       └── application.yml
+└── test/
