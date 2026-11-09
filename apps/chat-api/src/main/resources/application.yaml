@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: chat
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/rag_knowledge}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:postgres}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: update
+
+server:
+  port: ${SERVER_PORT:8081}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
