@@ -53,6 +53,12 @@ spec:
               port: http
             periodSeconds: 5
             failureThreshold: 12
+          startupProbe:
+            httpGet:
+              path: /actuator/health
+              port: http
+            periodSeconds: 5
+            failureThreshold: 30
           livenessProbe:
             httpGet:
               path: /actuator/health
