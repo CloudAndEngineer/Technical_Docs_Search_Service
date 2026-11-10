@@ -2,6 +2,15 @@
 
 The manifests use the current namespace and expect a default StorageClass.
 
+To enable Gemini API calls from `chat-api`, create a Kubernetes Secret with a Google AI Studio API key. Do not commit the key:
+
+```powershell
+kubectl create secret generic gemini-credentials `
+  --from-literal=api-key='<your-google-api-key>'
+```
+
+The `chat-api` Deployment reads the key as `GOOGLE_API_KEY` and uses `GEMINI_MODEL` to select the model (default: `gemini-3.8-flash`). The key reference is optional so the service can start before a key is configured.
+
 Create the database credentials Secret before starting PostgreSQL. Use a private password and do not commit the generated Secret:
 
 ```powershell

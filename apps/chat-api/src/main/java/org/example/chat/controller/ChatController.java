@@ -2,6 +2,7 @@ package org.example.chat.controller;
 
 import jakarta.validation.Valid;
 import org.example.chat.dto.request.ChatRequest;
+import org.example.chat.dto.response.ChatResponse;
 import org.example.chat.service.ChatService;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,7 +23,7 @@ public class ChatController {
 	}
 
 	@PostMapping
-	public void chat(@PathVariable UUID sessionId, @Valid @RequestBody ChatRequest request) {
-		chatService.answer(sessionId, request);
+	public ChatResponse chat(@PathVariable UUID sessionId, @Valid @RequestBody ChatRequest request) {
+		return chatService.answer(sessionId, request);
 	}
 }

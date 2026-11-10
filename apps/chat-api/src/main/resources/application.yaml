@@ -10,6 +10,11 @@ spring:
     hibernate:
       ddl-auto: update
 
+gemini:
+  model: ${GEMINI_MODEL:gemini-3.8-flash}
+  embedding-model: ${GEMINI_EMBEDDING_MODEL:gemini-embedding-001}
+  retrieval-limit: ${GEMINI_RETRIEVAL_LIMIT:5}
+
 server:
   port: ${SERVER_PORT:8081}
 

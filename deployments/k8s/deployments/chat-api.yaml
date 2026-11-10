@@ -47,6 +47,14 @@ spec:
                 secretKeyRef:
                   name: postgres-credentials
                   key: password
+            - name: GOOGLE_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: gemini-credentials
+                  key: api-key
+                  optional: true
+            - name: GEMINI_MODEL
+              value: gemini-3.8-flash
           readinessProbe:
             httpGet:
               path: /actuator/health
