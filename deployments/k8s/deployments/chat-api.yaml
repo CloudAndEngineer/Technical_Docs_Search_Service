@@ -28,7 +28,7 @@ spec:
       containers:
         - name: chat-api
           image: finalproject/chat-api:local
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           ports:
             - name: http
               containerPort: 8081
