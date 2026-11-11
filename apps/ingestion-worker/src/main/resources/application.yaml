@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: ingestion
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/rag_knowledge}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:postgres}
+
+server:
+  port: ${SERVER_PORT:8082}
