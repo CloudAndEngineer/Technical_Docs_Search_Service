@@ -48,6 +48,18 @@ kubectl port-forward service/api-gateway 8080:8080
 
 Then use `http://localhost:8080/api/v1/` for API requests.
 
+Build and expose the web frontend on NodePort `30081`:
+
+```powershell
+docker build -t finalproject/web-frontend:local -f apps/web-frontend/Dockerfile apps/web-frontend
+kubectl apply -f deployments/k8s/deployments/web-frontend.yaml
+kubectl rollout status deployment/web-frontend --timeout=180s
+```
+
+Open `http://localhost:30081` in a browser. Nginx serves the frontend and
+forwards `/api` and `/actuator` requests to the in-cluster `api-gateway` Service.
+The API Gateway must be running first.
+
 The PostgreSQL initialization script creates the shared notebook, session, and document-chunk tables, enables `vector`, and adds indexes for notebook filtering. PostgreSQL runs as one StatefulSet replica; `chat-api` and `ingestion-worker` connect through the `postgres` Service. The chat-api deployment sets `DB_URL` to `jdbc:postgresql://postgres:5432/rag_knowledge`.
 
 The embedding column currently accepts `vector` values without a fixed dimension. Add an HNSW or IVFFlat index after choosing the embedding model and its dimension; pgvector approximate indexes need a consistent vector dimension.
