@@ -5,6 +5,8 @@ import com.google.genai.errors.GenAiIOException;
 import com.google.genai.types.Content;
 import com.google.genai.types.EmbedContentConfig;
 import com.google.genai.types.GenerateContentConfig;
+import com.google.genai.types.HttpOptions;
+import com.google.genai.types.HttpRetryOptions;
 import com.google.genai.types.Part;
 import jakarta.annotation.PreDestroy;
 import org.example.chat.exception.ApiException;
@@ -19,6 +21,8 @@ public class GeminiService {
 	private final String generationModel;
 	private final String embeddingModel;
 	private final Client client;
+	private static final int GEMINI_REQUEST_TIMEOUT_MS = 30_000;
+	private static final int GEMINI_MAX_ATTEMPTS = 3;
 
 	public GeminiService(
 			@Value("${GOOGLE_API_KEY:}") String apiKey,
@@ -28,7 +32,20 @@ public class GeminiService {
 		this.embeddingModel = embeddingModel;
 		this.client = apiKey == null || apiKey.isBlank()
 				? null
-				: Client.builder().apiKey(apiKey).build();
+				: Client.builder()
+						.apiKey(apiKey)
+						.httpOptions(HttpOptions.builder()
+								.timeout(GEMINI_REQUEST_TIMEOUT_MS)
+								.retryOptions(HttpRetryOptions.builder()
+										.attempts(GEMINI_MAX_ATTEMPTS)
+										.initialDelay(1.0)
+										.maxDelay(2.0)
+										.expBase(2.0)
+										.jitter(0.5)
+										.httpStatusCodes(503, 504)
+										.build())
+								.build())
+						.build();
 	}
 
 	public float[] embedQuestion(String question) {
