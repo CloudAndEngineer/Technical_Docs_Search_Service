@@ -1,3 +1,5 @@
+# API Gateway 빌드 및 배포
+
 ## Prerequisites
 
 * DB를 미리 빌드, 배포하고 Gemini API Key 설정을 완료해야 한다.
@@ -80,4 +82,3 @@ curl -X POST http://localhost:8080/api/v1/notebooks \
   -H 'Content-Type: application/json' \
   -d '{"title":"Gateway 테스트"}'
 ```
-

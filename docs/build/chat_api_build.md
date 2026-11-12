@@ -1,5 +1,11 @@
 # Chat API 빌드 및 배포 
 
+## Prerequisites
+
+* DB를 미리 빌드, 배포하고 Gemini API Key 설정을 완료해야 한다.
+
+* 자세한 내용은 `docs/build/prerequisites_for_build.md` 문서 참조
+
 ## 주요 기능
 
 ### POST
