@@ -2,7 +2,10 @@ package org.example.ingestion.repository;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.PreparedStatement;
+import java.util.List;
 import java.util.UUID;
 
 @Repository
@@ -32,6 +35,20 @@ public class DocumentChunkRepository {
 				fileName,
 				sourceUrl);
 		return chunkId;
+	}
+
+	@Transactional
+	public void saveAll(UUID notebookId, List<IndexedChunk> chunks,
+			String documentTitle, String fileName, String sourceUrl) {
+		jdbcTemplate.batchUpdate(INSERT_SQL, chunks, 100, (PreparedStatement statement, IndexedChunk chunk) -> {
+			statement.setObject(1, UUID.randomUUID());
+			statement.setObject(2, notebookId);
+			statement.setString(3, chunk.content());
+			statement.setString(4, toPgVectorLiteral(chunk.embedding()));
+			statement.setString(5, documentTitle);
+			statement.setString(6, fileName);
+			statement.setString(7, sourceUrl);
+		});
 	}
 
 	private String toPgVectorLiteral(float[] values) {

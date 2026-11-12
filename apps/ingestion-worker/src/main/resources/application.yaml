@@ -1,10 +1,32 @@
 spring:
   application:
-    name: ingestion
+    name: ingestion-worker
   datasource:
     url: ${DB_URL:jdbc:postgresql://localhost:5432/rag_knowledge}
     username: ${DB_USERNAME:postgres}
     password: ${DB_PASSWORD:postgres}
+  sql:
+    init:
+      mode: always
+  servlet:
+    multipart:
+      max-file-size: ${MAX_FILE_SIZE:20MB}
+      max-request-size: ${MAX_REQUEST_SIZE:21MB}
+
+gemini:
+  model: ${GEMINI_MODEL:gemini-3.8-flash}
+  embedding-model: ${GEMINI_EMBEDDING_MODEL:gemini-embedding-001}
+
+ingestion:
+  max-file-size-bytes: ${MAX_FILE_SIZE_BYTES:20971520}
+  max-web-source-bytes: ${MAX_WEB_SOURCE_BYTES:5242880}
+  search-result-limit: ${GEMINI_SEARCH_RESULT_LIMIT:5}
 
 server:
   port: ${SERVER_PORT:8082}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
