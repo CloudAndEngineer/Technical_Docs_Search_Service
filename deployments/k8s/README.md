@@ -48,6 +48,19 @@ kubectl port-forward service/api-gateway 8080:8080
 
 Then use `http://localhost:8080/api/v1/` for API requests.
 
+Build, deploy, and route document ingestion requests through the API Gateway:
+
+```powershell
+Push-Location apps/ingestion-worker
+./mvnw.cmd -DskipTests package
+Pop-Location
+docker build -t finalproject/ingestion-worker:local -f apps/ingestion-worker/Dockerfile apps/ingestion-worker
+kubectl apply -f deployments/k8s/deployments/ingestion-worker.yaml
+kubectl rollout status deployment/ingestion-worker --timeout=180s
+```
+
+The Gateway now routes document upload, official-document search, and ingestion-job status requests to the `ingestion-worker` Service. Rebuild and apply the Gateway manifest after changing its routes. See `docs/ingestion_worker_build.md` for endpoint examples.
+
 Build and expose the web frontend on NodePort `30081`:
 
 ```powershell

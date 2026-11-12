@@ -1,3 +1,19 @@
+## Prerequisites
+
+* DB를 미리 빌드, 배포하고 Gemini API Key 설정을 완료해야 한다.
+
+* 자세한 내용은 `docs/build/prerequisites_for_build.md` 문서 참조
+
+## 주요 기능
+
+* 사용자의 요청을 처리하는 단일 접점
+
+* 사용자의 요청을 받아 api-gateway, chat-api, ingestion-worker 중 하나로 보낸다.
+
+* crawler-worker는 나중에 구현 예정
+
+## 빌드 & 배포
+
 * api-gateway 디렉토리로 이동한다.
 
 ```bash

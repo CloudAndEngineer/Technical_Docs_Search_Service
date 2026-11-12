@@ -1,3 +1,33 @@
+# Chat API 빌드 및 배포 
+
+## 주요 기능
+
+### POST
+
+* `/api/v1/notebooks`: 공용 노트북을 생성한다. 요청 본문은 `{"title":"노트북 제목"}`이며, 생성된 `notebookId`, 제목, 생성 시각을 반환한다. 성공 응답은 `201 Created`이다.
+* `/api/v1/notebooks/{notebookId}/sessions`: 해당 노트북에 대화 세션을 생성한다. 요청 본문은 없으며, `sessionId`와 `notebookId`를 반환한다. 성공 응답은 `201 Created`이다.
+* `/api/v1/sessions/{sessionId}/chat`: 질문을 받아 해당 세션의 노트북에 등록된 문서 청크에서 관련 내용을 검색하고, Gemini 답변과 참고 자료 목록을 반환한다. 요청 본문은 `{"question":"질문 내용"}`이다. 관련 문서가 없으면 안내 답변과 빈 `sources` 목록을 반환한다.
+
+### GET
+
+* `/api/v1/notebooks`: 공용 노트북 목록을 생성 시각의 내림차순으로 조회한다.
+* `/api/v1/notebooks/{notebookId}/sessions`: 노트북에 속한 대화 세션 목록을 생성 시각의 내림차순으로 조회한다.
+* `/api/v1/sessions/{sessionId}`: 세션 ID에 해당하는 세션 정보와 연결된 `notebookId`를 조회한다.
+
+### DELETE
+
+* `/api/v1/notebooks/{notebookId}`: 노트북을 삭제한다. 연결된 세션과 문서 청크도 함께 삭제되며, 성공 응답은 `204 No Content`이다.
+
+* 요청 값 검증, 존재하지 않는 리소스, 데이터베이스 또는 Gemini 처리 오류는 공통 JSON 오류 형식과 HTTP `400 Bad Request`로 반환한다.
+
+## Prerequisites
+
+* DB를 미리 빌드, 배포하고 Gemini API Key 설정을 완료해야 한다.
+
+* 자세한 내용은 `docs/build/prerequisites_for_build.md` 문서 참조
+
+## 빌드 & 배포
+
 * chat-api 디렉토리로 이동한다.
 
 ```bash
@@ -16,20 +46,6 @@ Linux / Mac
 ./mvnw -o -Dmaven.repo.local="$HOME/.m2/repository" -Dmaven.test.skip=true package
 ```
 
-* 명령어 설명
-
-  * `-o`: offline. 인터넷에서 의존성을 다운받지 않고 로컬에 존재하는 라이브러리만 사용
-
-  * `-Dmaven.repo.local`: 로컬 저장소의 경로를 강제로 지정. 위 명령어에서는 Apache Maven이 기본적으로 사용하는 로컬 설정 저장소 폴더를 가리킴
-
-  * `-Dmaven.test.skip=true`: 테스트 케이스를 실행하지 않고, 컴파일하지 않는다.
-
-  * `package`: jar package로 빌드한다.
-
-* IntelliJ의 Maven 빌드 기능을 사용할 때 오류가 발생했던 이유
-
-  * 다른 이유가 있을 수도 있지만, 로그 메시지의 Classpath 경로에 공백이 있었는데, Quotation 처리를 하지 않아 명령어 처리에 실패한 듯
-
 * jar 파일을 이용해 docker 이미지를 빌드한다.
 
 ```bash
@@ -44,6 +60,8 @@ docker build -t finalproject/chat-api:local -f Dockerfile .
 cd <path-to-finalproject>
 kubectl apply -f deployments/k8s/deployments/chat-api.yaml; kubectl rollout status deployment/chat-api --timeout=180s
 ```
+
+## 테스트
 
 * Kubernetes Cluster는 호스트와 독립된 별도의 내부망을 사용하기 때문에 호스트 컴퓨터에서는 Private IP로 클러스터에 접근할 수 없다.
 
