@@ -3,12 +3,9 @@ package org.example.ingestion.parser;
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.example.ingestion.exception.IngestionException;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.net.URI;
 import java.nio.ByteBuffer;
 import java.nio.charset.CharacterCodingException;
 import java.nio.charset.StandardCharsets;
@@ -32,24 +29,6 @@ public class DocumentParser {
 			throw new IngestionException("INVALID_FILE_FORMAT", "PDF, MD, TXT 파일만 등록할 수 있습니다.");
 		}
 		return extension;
-	}
-
-	public String parseWebDocument(byte[] bytes, String contentType, String sourceUrl) {
-		String normalizedType = contentType == null ? "" : contentType.toLowerCase(Locale.ROOT);
-		String path = URI.create(sourceUrl).getPath();
-		String extension = path == null ? "" : extension(path);
-		if (normalizedType.contains("pdf") || extension.equals("pdf")) {
-			return parsePdf(bytes);
-		}
-		if (normalizedType.startsWith("text/plain") || extension.equals("txt") || extension.equals("md")) {
-			return parseText(bytes);
-		}
-		if (normalizedType.contains("html") || normalizedType.isBlank()) {
-			Document document = Jsoup.parse(new String(bytes, StandardCharsets.UTF_8), sourceUrl);
-			document.select("script, style, nav, footer, header, noscript, svg").remove();
-			return document.body() == null ? "" : document.body().text();
-		}
-		throw new IngestionException("UNSUPPORTED_WEB_DOCUMENT", "검색 결과가 지원하지 않는 문서 형식입니다.");
 	}
 
 	private String parsePdf(byte[] bytes) {

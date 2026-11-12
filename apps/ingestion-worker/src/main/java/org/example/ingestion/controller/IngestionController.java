@@ -1,16 +1,12 @@
 package org.example.ingestion.controller;
 
-import jakarta.validation.Valid;
 import org.example.ingestion.dto.IngestionJobResponse;
-import org.example.ingestion.dto.SearchRequest;
 import org.example.ingestion.service.IngestionJobService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -34,14 +30,6 @@ public class IngestionController {
 			@RequestPart("file") MultipartFile file,
 			@RequestPart(value = "title", required = false) String title) throws IOException {
 		return jobs.enqueueUpload(notebookId, title, file.getOriginalFilename(), file.getBytes());
-	}
-
-	@PostMapping("/api/v1/notebooks/{notebookId}/sources")
-	@ResponseStatus(HttpStatus.ACCEPTED)
-	public IngestionJobResponse searchOfficialDocuments(
-			@PathVariable UUID notebookId,
-			@Valid @RequestBody SearchRequest request) {
-		return jobs.enqueueSearch(notebookId, request.query());
 	}
 
 	@GetMapping("/api/v1/ingestion-jobs/{jobId}")

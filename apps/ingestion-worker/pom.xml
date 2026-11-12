@@ -17,7 +17,6 @@
 		<java.version>25</java.version>
 		<google-genai.version>1.79.0</google-genai.version>
 		<pdfbox.version>3.0.8</pdfbox.version>
-		<jsoup.version>1.24.1</jsoup.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -45,11 +44,6 @@
 			<groupId>org.apache.pdfbox</groupId>
 			<artifactId>pdfbox</artifactId>
 			<version>${pdfbox.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.jsoup</groupId>
-			<artifactId>jsoup</artifactId>
-			<version>${jsoup.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.postgresql</groupId>

@@ -9,7 +9,7 @@ spring:
             - id: ingestion-worker
               uri: ${INGESTION_WORKER_URL:http://localhost:8082}
               predicates:
-                - Path=/api/v1/notebooks/*/documents,/api/v1/notebooks/*/sources,/api/v1/ingestion-jobs/**
+                - Path=/api/v1/notebooks/*/documents,/api/v1/ingestion-jobs/**
             - id: chat-api
               uri: ${CHAT_API_URL:http://localhost:8081}
               predicates:

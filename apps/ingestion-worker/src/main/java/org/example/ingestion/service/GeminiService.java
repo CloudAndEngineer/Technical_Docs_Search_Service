@@ -3,29 +3,22 @@ package org.example.ingestion.service;
 import com.google.genai.Client;
 import com.google.genai.errors.GenAiIOException;
 import com.google.genai.types.EmbedContentConfig;
-import com.google.genai.types.GenerateContentConfig;
-import com.google.genai.types.GoogleSearch;
-import com.google.genai.types.Tool;
 import jakarta.annotation.PreDestroy;
 import org.example.ingestion.exception.IngestionException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class GeminiService {
 
-	private final String generationModel;
 	private final String embeddingModel;
 	private final Client client;
 
 	public GeminiService(
 			@Value("${GOOGLE_API_KEY:}") String apiKey,
-			@Value("${gemini.model}") String generationModel,
 			@Value("${gemini.embedding-model}") String embeddingModel) {
-		this.generationModel = generationModel;
 		this.embeddingModel = embeddingModel;
 		this.client = apiKey == null || apiKey.isBlank()
 				? null
@@ -58,48 +51,6 @@ public class GeminiService {
 		}
 	}
 
-	public List<SearchSource> searchOfficialDocumentation(String query, int resultLimit) {
-		ensureConfigured();
-		String prompt = query.trim() + " 에 관한 공식 기술 문서 찾아줘";
-		var config = GenerateContentConfig.builder()
-				.tools(Tool.builder().googleSearch(GoogleSearch.builder()).build())
-				.build();
-		try {
-			var response = client.models.generateContent(generationModel, prompt, config);
-			var candidates = response.candidates().orElse(List.of());
-			if (candidates.isEmpty()) {
-				throw new IngestionException("NO_SEARCH_RESULTS", "Gemini 검색 결과가 없습니다.");
-			}
-			var grounding = candidates.getFirst().groundingMetadata()
-					.orElseThrow(() -> new IngestionException("NO_SEARCH_RESULTS", "Gemini 검색 결과에 출처 URL이 없습니다."));
-			var chunks = grounding.groundingChunks().orElse(List.of());
-			List<SearchSource> sources = new ArrayList<>();
-			for (var chunk : chunks) {
-				chunk.web().ifPresent(web -> {
-					String url = web.uri().orElse("");
-					if (!url.isBlank() && sources.stream().noneMatch(source -> source.url().equals(url))) {
-						sources.add(new SearchSource(web.title().orElse("공식 기술 문서"), url));
-					}
-				});
-				if (sources.size() >= resultLimit) {
-					break;
-				}
-			}
-			if (sources.isEmpty()) {
-				throw new IngestionException("NO_SEARCH_RESULTS", "Gemini 검색 결과에서 문서 URL을 찾지 못했습니다.");
-			}
-			return sources;
-		} catch (IngestionException exception) {
-			throw exception;
-		} catch (com.google.genai.errors.ApiException exception) {
-			throw translateApiException(exception);
-		} catch (GenAiIOException exception) {
-			throw new IngestionException("GEMINI_API_ERROR", "Gemini API에 연결할 수 없습니다. 네트워크 상태를 확인하세요.", exception);
-		} catch (RuntimeException exception) {
-			throw new IngestionException("GEMINI_API_ERROR", "공식 문서 검색 요청에 실패했습니다.", exception);
-		}
-	}
-
 	private IngestionException translateApiException(com.google.genai.errors.ApiException exception) {
 		String message = switch (exception.code()) {
 			case 401, 403 -> "Gemini API 인증에 실패했습니다. API 키와 권한을 확인하세요.";
@@ -121,8 +72,5 @@ public class GeminiService {
 		if (client != null) {
 			client.close();
 		}
-	}
-
-	public record SearchSource(String title, String url) {
 	}
 }

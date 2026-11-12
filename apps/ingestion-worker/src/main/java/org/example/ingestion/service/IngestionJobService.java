@@ -35,7 +35,7 @@ public class IngestionJobService {
 			throw new IngestionException("EMPTY_FILE", "업로드한 파일이 비어 있습니다.");
 		}
 		if (bytes.length > maxFileSizeBytes) {
-			throw new IngestionException("FILE_TOO_LARGE", "업로드 파일의 크기가 허용 범위를 초과했습니다.");
+			throw new IngestionException("FILE_TOO_LARGE", "업로드 파일 크기가 허용 범위를 초과했습니다.");
 		}
 		String fileName = basename(originalFileName);
 		parser.validateUploadName(fileName);
@@ -47,24 +47,6 @@ public class IngestionJobService {
 		IngestionJobResponse job = jobs.create(jobId, notebookId, "UPLOAD", documentTitle, fileName);
 		try {
 			pipeline.processUpload(jobId, notebookId, documentTitle, fileName, bytes);
-		} catch (TaskRejectedException exception) {
-			jobs.updateStatus(jobId, "FAILED", "WORKER_BUSY", "처리 대기열이 가득 찼습니다. 잠시 후 다시 시도하세요.");
-		}
-		return job;
-	}
-
-	public IngestionJobResponse enqueueSearch(UUID notebookId, String query) {
-		ensureNotebookExists(notebookId);
-		if (query == null || query.isBlank()) {
-			throw new IngestionException("INVALID_SEARCH_QUERY", "검색할 기술 정보 이름을 입력하세요.");
-		}
-		if (query.length() > 300) {
-			throw new IngestionException("INVALID_SEARCH_QUERY", "검색어는 300자 이내로 입력하세요.");
-		}
-		UUID jobId = UUID.randomUUID();
-		IngestionJobResponse job = jobs.create(jobId, notebookId, "WEB_SEARCH", null, null);
-		try {
-			pipeline.processSearch(jobId, notebookId, query.trim());
 		} catch (TaskRejectedException exception) {
 			jobs.updateStatus(jobId, "FAILED", "WORKER_BUSY", "처리 대기열이 가득 찼습니다. 잠시 후 다시 시도하세요.");
 		}

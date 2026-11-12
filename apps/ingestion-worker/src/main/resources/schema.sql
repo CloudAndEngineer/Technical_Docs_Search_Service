@@ -5,7 +5,6 @@ CREATE TABLE IF NOT EXISTS ingestion_jobs (
     status varchar(20) NOT NULL,
     document_title varchar(500),
     file_name varchar(500),
-    source_urls text NOT NULL DEFAULT '',
     error_code varchar(80),
     error_message text,
     created_at timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP,
