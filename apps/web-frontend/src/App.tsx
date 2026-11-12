@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState, type FormEvent, type KeyboardEven
 import {
   api,
   type ChatSource,
+  type IngestionJob,
   type Notebook,
   type Session,
 } from './api'
@@ -56,10 +57,16 @@ function App() {
   const [sending, setSending] = useState(false)
   const [creatingNotebook, setCreatingNotebook] = useState(false)
   const [newNotebookTitle, setNewNotebookTitle] = useState('')
+  const [uploadFile, setUploadFile] = useState<File | null>(null)
+  const [documentTitle, setDocumentTitle] = useState('')
+  const [uploading, setUploading] = useState(false)
+  const [uploadError, setUploadError] = useState('')
+  const [ingestionJobs, setIngestionJobs] = useState<IngestionJob[]>([])
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false)
   const feedRef = useRef<HTMLDivElement>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const activeNotebook = useMemo(
     () => notebooks.find((notebook) => notebook.notebookId === selectedNotebookId) ?? null,
@@ -112,6 +119,30 @@ function App() {
       feedRef.current.scrollTo({ top: feedRef.current.scrollHeight, behavior: 'smooth' })
     }
   }, [messages, sending])
+
+  useEffect(() => {
+    const pendingJobs = ingestionJobs.filter((job) => job.status === 'QUEUED' || job.status === 'PROCESSING')
+    if (pendingJobs.length === 0) return
+
+    let polling = false
+    const timer = window.setInterval(async () => {
+      if (polling) return
+      polling = true
+      try {
+        const updates = await Promise.allSettled(pendingJobs.map((job) => api.getIngestionJob(job.jobId)))
+        const latestJobs = updates
+          .filter((result): result is PromiseFulfilledResult<IngestionJob> => result.status === 'fulfilled')
+          .map((result) => result.value)
+        if (latestJobs.length) {
+          setIngestionJobs((current) => current.map((job) => latestJobs.find((latest) => latest.jobId === job.jobId) ?? job))
+        }
+      } finally {
+        polling = false
+      }
+    }, 2500)
+
+    return () => window.clearInterval(timer)
+  }, [ingestionJobs])
 
   async function loadNotebooks() {
     setLoadingNotebooks(true)
@@ -185,6 +216,35 @@ function App() {
       setError(errorMessage(reason))
     } finally {
       setBusy(false)
+    }
+  }
+
+  async function handleUploadDocument(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+    if (!selectedNotebookId || !uploadFile || uploading) return
+
+    const extension = uploadFile.name.split('.').pop()?.toLowerCase()
+    if (!extension || !['pdf', 'md', 'txt'].includes(extension)) {
+      setUploadError('PDF, Markdown(.md), TXT 파일만 업로드할 수 있습니다.')
+      return
+    }
+    if (uploadFile.size > 20 * 1024 * 1024) {
+      setUploadError('파일 크기는 20 MB 이하여야 합니다.')
+      return
+    }
+
+    setUploading(true)
+    setUploadError('')
+    try {
+      const job = await api.uploadDocument(selectedNotebookId, uploadFile, documentTitle)
+      setIngestionJobs((current) => [job, ...current.filter((item) => item.jobId !== job.jobId)])
+      setUploadFile(null)
+      setDocumentTitle('')
+      if (fileInputRef.current) fileInputRef.current.value = ''
+    } catch (reason) {
+      setUploadError(errorMessage(reason))
+    } finally {
+      setUploading(false)
     }
   }
 
@@ -303,6 +363,55 @@ function App() {
 
         <section className="workspace-content">
           {error && <div className="error-banner" role="alert"><span>{error}</span><button aria-label="오류 닫기" onClick={() => setError('')}><Icon name="close" size={15} /></button></div>}
+          {activeNotebook && (
+            <section className="document-upload-panel" aria-labelledby="document-upload-title">
+              <div className="upload-panel-heading">
+                <div className="upload-heading-icon"><Icon name="file" size={17} /></div>
+                <div><h2 id="document-upload-title">노트북에 문서 추가</h2><p>업로드한 문서는 이 노트북의 공용 자료로 등록됩니다.</p></div>
+              </div>
+              <form className="document-upload-form" onSubmit={(event) => void handleUploadDocument(event)}>
+                <label className="upload-field upload-file-field">
+                  <span>파일</span>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept=".pdf,.md,.txt,application/pdf,text/markdown,text/plain"
+                    onChange={(event) => { setUploadFile(event.target.files?.[0] ?? null); setUploadError('') }}
+                    disabled={uploading}
+                    required
+                  />
+                </label>
+                <label className="upload-field upload-title-field">
+                  <span>문서 제목 <small>선택</small></span>
+                  <input
+                    type="text"
+                    maxLength={500}
+                    value={documentTitle}
+                    onChange={(event) => setDocumentTitle(event.target.value)}
+                    placeholder="입력하지 않으면 파일명을 사용합니다"
+                    disabled={uploading}
+                  />
+                </label>
+                <button className="upload-submit-button" type="submit" disabled={!uploadFile || uploading}>
+                  <Icon name="plus" size={16} />{uploading ? '업로드 중…' : '업로드'}
+                </button>
+              </form>
+              <div className="upload-panel-footer"><span>PDF · MD · TXT</span><span>최대 20 MB</span></div>
+              {uploadError && <p className="upload-error" role="alert">{uploadError}</p>}
+              {ingestionJobs.some((job) => job.notebookId === selectedNotebookId) && (
+                <div className="upload-job-list" aria-live="polite">
+                  {ingestionJobs.filter((job) => job.notebookId === selectedNotebookId).map((job) => (
+                    <div className="upload-job-row" key={job.jobId}>
+                      <span className={`job-status-dot ${job.status.toLowerCase()}`} />
+                      <span className="upload-job-names"><strong>{job.documentTitle || job.fileName || '업로드 자료'}</strong><small>{job.fileName}</small></span>
+                      <span className={`job-status-label ${job.status.toLowerCase()}`}>{jobStatusLabel(job.status)}</span>
+                      {job.status === 'FAILED' && job.errorMessage && <span className="job-error-message" title={job.errorMessage}>{job.errorMessage}</span>}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </section>
+          )}
           {!activeNotebook ? (
             <div className="welcome-state">
               <div className="welcome-orbit"><div className="welcome-icon"><Icon name="spark" size={30} /></div><span className="orbit orbit-one" /><span className="orbit orbit-two" /></div>
@@ -376,6 +485,15 @@ function SourceCard({ source }: { source: ChatSource }) {
 
 function errorMessage(reason: unknown) {
   return reason instanceof Error ? reason.message : '요청 중 오류가 발생했습니다.'
+}
+
+function jobStatusLabel(status: IngestionJob['status']) {
+  switch (status) {
+    case 'QUEUED': return '대기 중'
+    case 'PROCESSING': return '처리 중'
+    case 'COMPLETED': return '완료'
+    case 'FAILED': return '실패'
+  }
 }
 
 function formatShortDate(value: string) {

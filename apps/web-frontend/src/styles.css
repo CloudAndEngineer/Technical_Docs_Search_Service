@@ -104,6 +104,39 @@ button:disabled { cursor: not-allowed; opacity: .55; }
 .error-banner button { display: grid; width: 22px; height: 22px; place-items: center; border: 0; border-radius: 5px; cursor: pointer; color: inherit; background: transparent; }
 .error-banner button:hover { background: #f8e8e4; }
 
+.document-upload-panel { width: min(100%, 910px); align-self: center; margin: 18px auto 0; padding: 15px 17px 11px; border: 1px solid #e5e9e2; border-radius: 12px; background: rgba(255, 255, 255, .88); box-shadow: 0 4px 15px rgba(38, 52, 41, .025); }
+.upload-panel-heading { display: flex; align-items: center; gap: 10px; }
+.upload-heading-icon { display: grid; width: 32px; height: 32px; flex: 0 0 auto; place-items: center; border: 1px solid #dce8dc; border-radius: 10px; color: var(--green); background: #f0f6ef; }
+.upload-panel-heading h2 { margin: 0 0 3px; color: #3c443c; font-size: 12px; font-weight: 650; }
+.upload-panel-heading p { margin: 0; color: #929990; font-size: 9px; }
+.document-upload-form { display: grid; grid-template-columns: minmax(220px, 1.15fr) minmax(190px, 1fr) auto; align-items: end; gap: 10px; margin-top: 13px; }
+.upload-field { display: flex; min-width: 0; flex-direction: column; gap: 5px; color: #707970; font-size: 9px; font-weight: 600; }
+.upload-field small { margin-left: 4px; color: #a4aaa2; font-size: 8px; font-weight: 400; }
+.upload-field input { width: 100%; min-width: 0; height: 35px; padding: 7px 9px; border: 1px solid #e5e9e3; border-radius: 7px; color: #596159; background: #fff; font-size: 10px; }
+.upload-field input[type='file'] { padding: 6px; }
+.upload-field input[type='file']::file-selector-button { margin-right: 8px; padding: 4px 7px; border: 0; border-radius: 5px; color: #536b56; background: #eef4ed; font: inherit; cursor: pointer; }
+.upload-field input::placeholder { color: #a6aca5; }
+.upload-submit-button { display: inline-flex; height: 35px; align-items: center; justify-content: center; gap: 6px; padding: 0 13px; border: 0; border-radius: 7px; cursor: pointer; color: #fff; background: var(--green); font-size: 10px; font-weight: 600; white-space: nowrap; }
+.upload-submit-button:hover:not(:disabled) { background: var(--green-dark); }
+.upload-submit-button:disabled { cursor: not-allowed; opacity: .5; }
+.upload-panel-footer { display: flex; justify-content: space-between; margin-top: 7px; color: #a2a8a0; font-size: 8px; }
+.upload-error { margin: 8px 0 0; color: #a4544a; font-size: 9px; }
+.upload-job-list { display: grid; gap: 1px; margin-top: 10px; border-top: 1px solid #eff1ed; }
+.upload-job-row { position: relative; display: flex; min-width: 0; align-items: center; gap: 9px; padding: 8px 1px; }
+.job-status-dot { width: 7px; height: 7px; flex: 0 0 auto; border-radius: 50%; background: #d0a35f; }
+.job-status-dot.processing { background: #6c94be; box-shadow: 0 0 0 3px rgba(108, 148, 190, .1); }
+.job-status-dot.completed { background: #64a779; }
+.job-status-dot.failed { background: #d8756e; }
+.upload-job-names { display: flex; min-width: 0; flex: 1; flex-direction: column; gap: 2px; }
+.upload-job-names strong, .upload-job-names small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.upload-job-names strong { color: #535b53; font-size: 9px; font-weight: 600; }
+.upload-job-names small { color: #9da39b; font-size: 8px; }
+.job-status-label { flex: 0 0 auto; color: #9c865f; font-size: 8px; }
+.job-status-label.processing { color: #6b86a3; }
+.job-status-label.completed { color: #5c8b68; }
+.job-status-label.failed { color: #b5645b; }
+.job-error-message { overflow: hidden; max-width: 35%; color: #a15a50; font-size: 8px; text-overflow: ellipsis; white-space: nowrap; }
+
 .welcome-state { display: flex; width: 100%; flex: 1; flex-direction: column; align-items: center; justify-content: center; padding: 50px 20px 68px; text-align: center; animation: appear .5s ease both; }
 .welcome-orbit { position: relative; display: grid; width: 102px; height: 102px; place-items: center; margin: 0 0 29px; }
 .welcome-icon { position: relative; z-index: 1; display: grid; width: 54px; height: 54px; place-items: center; border: 1px solid #dbe8dc; border-radius: 19px; color: var(--green); background: #f5f9f4; box-shadow: 0 5px 18px rgba(49, 104, 79, .08); }
@@ -124,7 +157,7 @@ button:disabled { cursor: not-allowed; opacity: .55; }
 .welcome-caption { display: flex; align-items: center; gap: 11px; margin-top: 47px; color: #a4aaa2; font-size: 9px; }
 .caption-line { width: 24px; height: 1px; background: #dfe3dc; }
 
-.chat-layout { display: flex; width: min(100%, 910px); min-height: calc(100vh - 65px); flex: 1; flex-direction: column; align-self: center; }
+.chat-layout { display: flex; width: min(100%, 910px); min-height: 0; flex: 1; flex-direction: column; align-self: center; }
 .chat-heading { display: flex; align-items: center; gap: 12px; padding: 27px 0 21px; border-bottom: 1px solid #e9ebe6; }
 .chat-heading-icon { display: grid; width: 36px; height: 36px; flex: 0 0 auto; place-items: center; border: 1px solid #dce8dc; border-radius: 12px; color: var(--green); background: #f0f6ef; }
 .chat-heading h1 { overflow: hidden; max-width: min(45vw, 420px); margin: 0 0 3px; color: #343a34; font-size: 14px; font-weight: 650; text-overflow: ellipsis; white-space: nowrap; }
@@ -212,12 +245,17 @@ button:disabled { cursor: not-allowed; opacity: .55; }
   .topbar-new-chat { padding: 7px 9px; font-size: 9px; }
   .topbar-new-chat span { display: none; }
   .workspace-content { padding: 0 15px; }
+  .document-upload-panel { margin-top: 12px; padding: 12px; }
+  .document-upload-form { grid-template-columns: minmax(0, 1fr) auto; gap: 9px; }
+  .upload-file-field { grid-column: 1 / -1; }
+  .upload-title-field { min-width: 0; }
+  .upload-submit-button { padding: 0 10px; }
   .welcome-state { padding: 40px 10px 52px; }
   .welcome-state h1 { font-size: 30px; letter-spacing: -1.1px; }
   .welcome-description { max-width: 290px; font-size: 11px; }
   .welcome-caption { gap: 7px; margin-top: 36px; font-size: 8px; }
   .caption-line { width: 14px; }
-  .chat-layout { min-height: calc(100vh - 58px); }
+  .chat-layout { min-height: 0; }
   .chat-heading { gap: 9px; padding: 18px 0 15px; }
   .chat-heading-icon { width: 32px; height: 32px; }
   .chat-heading h1 { max-width: 48vw; font-size: 12px; }

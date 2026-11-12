@@ -22,6 +22,19 @@ export type ChatResponse = {
   sources: ChatSource[]
 }
 
+export type IngestionJob = {
+  jobId: string
+  notebookId: string
+  type: string
+  status: 'QUEUED' | 'PROCESSING' | 'COMPLETED' | 'FAILED'
+  documentTitle: string | null
+  fileName: string | null
+  errorCode: string | null
+  errorMessage: string | null
+  createdAt: string
+  updatedAt: string
+}
+
 type ApiErrorBody = {
   message?: string
   code?: string
@@ -29,7 +42,7 @@ type ApiErrorBody = {
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const headers = new Headers(init?.headers)
-  if (init?.body && !headers.has('Content-Type')) {
+  if (init?.body && !(init.body instanceof FormData) && !headers.has('Content-Type')) {
     headers.set('Content-Type', 'application/json')
   }
   const response = await fetch(path, {
@@ -64,4 +77,14 @@ export const api = {
     method: 'POST',
     body: JSON.stringify({ question }),
   }),
+  uploadDocument: (notebookId: string, file: File, title: string) => {
+    const body = new FormData()
+    body.append('file', file)
+    if (title.trim()) body.append('title', title.trim())
+    return request<IngestionJob>(`/api/v1/notebooks/${notebookId}/documents`, {
+      method: 'POST',
+      body,
+    })
+  },
+  getIngestionJob: (jobId: string) => request<IngestionJob>(`/api/v1/ingestion-jobs/${jobId}`),
 }
