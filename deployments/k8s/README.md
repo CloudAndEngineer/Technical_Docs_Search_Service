@@ -52,14 +52,14 @@ Build, deploy, and route document ingestion requests through the API Gateway:
 
 ```powershell
 Push-Location apps/ingestion-worker
-./mvnw.cmd -DskipTests package
+.\mvnw.cmd -o "-Dmaven.repo.local=$($env:USERPROFILE)\.m2\repository" "-Dmaven.test.skip=true" package
 Pop-Location
 docker build -t finalproject/ingestion-worker:local -f apps/ingestion-worker/Dockerfile apps/ingestion-worker
 kubectl apply -f deployments/k8s/deployments/ingestion-worker.yaml
 kubectl rollout status deployment/ingestion-worker --timeout=180s
 ```
 
-The Gateway now routes document upload, official-document search, and ingestion-job status requests to the `ingestion-worker` Service. Rebuild and apply the Gateway manifest after changing its routes. See `docs/ingestion_worker_build.md` for endpoint examples.
+The Gateway routes document upload and ingestion-job status requests to the `ingestion-worker` Service. Rebuild and apply the Gateway manifest after changing its routes. See `docs/build/ingestion_worker_build.md` for endpoint examples.
 
 Build and expose the web frontend on NodePort `30081`:
 
