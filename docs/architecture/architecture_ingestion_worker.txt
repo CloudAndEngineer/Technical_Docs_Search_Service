@@ -1,24 +1,26 @@
 ingestion-worker/
 src/main/java/org/example/ingestion/
-├── controller/       # Upload, official-document search, and job-status APIs
+├── controller/       # File upload and job-status APIs
 ├── dto/              # Request and response payloads
-├── parser/           # PDF, Markdown, text, and fetched web-page parsing
+├── parser/           # PDF, Markdown, and text file parsing
 ├── chunker/          # Fixed-size chunks with overlap
-├── service/          # Async job lifecycle, Gemini, fetching, and indexing pipeline
+├── service/          # Async job lifecycle, Gemini embedding, and indexing pipeline
 ├── repository/       # PostgreSQL job and pgvector chunk persistence
 └── config/           # Bounded async processing executor
 
 Pipeline:
-1. Validate notebook, file type/size, or search query.
+1. Validate notebook, file type, and file size.
 2. Persist a QUEUED job and return its UUID.
-3. Process the file or ask Gemini to search with Google Search grounding using
-   the prompt "<requested information> 에 관한 공식 기술 문서 찾아줘".
-4. Extract text, split it into overlapping chunks, and embed each chunk with
+3. Extract text from an uploaded PDF, Markdown, or TXT file.
+4. Split the text into overlapping chunks and embed each chunk with
    task type RETRIEVAL_DOCUMENT.
 5. Persist chunks in document_chunks with notebook_id and source metadata;
    update the job to COMPLETED or FAILED.
 
 API paths:
 - POST /api/v1/notebooks/{notebookId}/documents (multipart fields: file, optional title)
-- POST /api/v1/notebooks/{notebookId}/sources (JSON: {"query":"..."})
 - GET /api/v1/ingestion-jobs/{jobId}
+
+Web search and crawling are not part of this service. A future crawler-worker
+integration can pass collected page content and source metadata to this parser
+and indexing pipeline.
