@@ -63,21 +63,38 @@ kubectl rollout status deployment/api-gateway --timeout=180s
 
 ## API 예시
 
+Windows
 ```powershell
-$upload = curl.exe -s -F "title=Kubernetes 운영 가이드" -F "file=@C:\docs\guide.pdf" http://localhost:30080/api/v1/notebooks/<notebook-uuid>/documents | ConvertFrom-Json
-Invoke-RestMethod "http://localhost:30080/api/v1/ingestion-jobs/$($upload.jobId)"
+$notebookId = "<노트북 UUID>"
+$job = curl.exe -s `
+  -F "title=Kubernetes 운영 가이드" `
+-F "file=@C:\docs\guide.pdf" `
+"http://localhost:30080/api/v1/notebooks/$notebookId/documents" | ConvertFrom-Json
+
+Invoke-RestMethod "http://localhost:30080/api/v1/ingestion-jobs/$($job.jobId)"
 ```
 
 * `jq`가 설치되어 있는 경우
 
+Linux / Mac
 ```bash
-JOB_ID=$(curl -s -F "title=Kubernetes 운영 가이드" -F "file=@/path/to/guide.pdf" "http://localhost:30080/api/v1/notebooks/<notebook-uuid>/documents" | jq -r '.jobId')
+NOTEBOOK_ID="<노트북 UUID>"
+JOB_ID=$(curl -s \
+  -F "title=Kubernetes 운영 가이드" \
+  -F "file=@/path/to/guide.pdf" \
+  "http://localhost:30080/api/v1/notebooks/$NOTEBOOK_ID/documents" | jq -r '.jobId')
+
 curl -s "http://localhost:30080/api/v1/ingestion-jobs/$JOB_ID"
 ```
 
 * 별도의 JSON Parser(jq, python 등)이 없는 경우 Text Parsing으로 대체
 
 ```bash
-JOB_ID=$(curl -s -F "title=Kubernetes 운영 가이드" -F "file=@/path/to/guide.pdf" "http://localhost:30080/api/v1/notebooks/<notebook-uuid>/documents" | grep -o '"jobId":"[^"]*"' | cut -d'"' -f4)
+NOTEBOOK_ID="<노트북 UUID>"
+JOB_ID=$(curl -s \
+  -F "title=Kubernetes 운영 가이드" \
+  -F "file=@/path/to/guide.pdf" \
+  "http://localhost:30080/api/v1/notebooks/$NOTEBOOK_ID/documents" | grep -o '"jobId":"[^"]*"' | cut -d'"' -f4)
+
 curl -s "http://localhost:30080/api/v1/ingestion-jobs/$JOB_ID"
 ```
