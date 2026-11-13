@@ -3,14 +3,13 @@ kind: Service
 metadata:
   name: web-frontend
 spec:
-  type: NodePort
+  type: LoadBalancer
   selector:
     app: web-frontend
   ports:
     - name: http
       port: 8080
       targetPort: http
-      nodePort: 30081
 ---
 apiVersion: apps/v1
 kind: Deployment
