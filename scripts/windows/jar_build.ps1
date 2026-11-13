@@ -1,8 +1,10 @@
-Remove-Item -Path "..\apps\api-gateway\target" -Recurse -Force
-Remove-Item -Path "..\apps\chat-api\target" -Recurse -Force
-Remove-Item -Path "..\apps\ingestion-worker\target" -Recurse -Force
+Set-Location ..\..\apps
 
-Set-Location ..\apps\api-gateway
+Remove-Item -Path ".\api-gateway\target" -Recurse -Force
+Remove-Item -Path ".\chat-api\target" -Recurse -Force
+Remove-Item -Path ".\ingestion-worker\target" -Recurse -Force
+
+Set-Location .\api-gateway
 
 .\mvnw.cmd -o "-Dmaven.repo.local=$($env:USERPROFILE)\.m2\repository" "-Dmaven.test.skip=true" package
 
@@ -14,4 +16,4 @@ Set-Location ..\ingestion-worker
 
 .\mvnw.cmd -o "-Dmaven.repo.local=$($env:USERPROFILE)\.m2\repository" "-Dmaven.test.skip=true" package
 
-Set-Location ..\..\scripts
+Set-Location ..\..\scripts\windows
