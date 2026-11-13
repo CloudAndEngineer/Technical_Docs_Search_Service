@@ -8,16 +8,19 @@ spring:
           routes:
             - id: ingestion-worker-upload
               uri: ${INGESTION_WORKER_URL:http://localhost:8082}
+              order: -10
               predicates:
                 - Path=/api/v1/notebooks/{notebookId}/documents
                 - Method=POST
             - id: ingestion-worker-job-status
               uri: ${INGESTION_WORKER_URL:http://localhost:8082}
+              order: -10
               predicates:
                 - Path=/api/v1/ingestion-jobs/{jobId}
                 - Method=GET
             - id: chat-api
               uri: ${CHAT_API_URL:http://localhost:8081}
+              order: 0
               predicates:
                 - Path=/api/v1/**
 
