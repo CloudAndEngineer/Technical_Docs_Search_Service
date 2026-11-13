@@ -61,7 +61,7 @@ kubectl rollout status deployment/ingestion-worker --timeout=180s
 
 The Gateway routes document upload and ingestion-job status requests to the `ingestion-worker` Service. Rebuild and apply the Gateway manifest after changing its routes. See `docs/build/ingestion_worker_build.md` for endpoint examples.
 
-Build and expose the web frontend on NodePort `30081`:
+Build and expose the web frontend through a `LoadBalancer` Service on port `8080`:
 
 ```powershell
 docker build -t finalproject/web-frontend:local -f apps/web-frontend/Dockerfile apps/web-frontend
@@ -69,9 +69,11 @@ kubectl apply -f deployments/k8s/deployments/web-frontend.yaml
 kubectl rollout status deployment/web-frontend --timeout=180s
 ```
 
-Open `http://localhost:30081` in a browser. Nginx serves the frontend and
+On Docker Desktop Kubernetes, open `http://localhost:8080` in a browser. Nginx serves the frontend and
 forwards `/api` and `/actuator` requests to the in-cluster `api-gateway` Service.
 The API Gateway must be running first.
+
+Check that the LoadBalancer Service has an external address with `kubectl get service web-frontend`. If `EXTERNAL-IP` remains pending or localhost is not reachable in another Kubernetes environment, use that environment's LoadBalancer implementation or run `kubectl port-forward service/web-frontend 8080:8080` as a fallback.
 
 The PostgreSQL initialization script creates the shared notebook, session, and document-chunk tables, enables `vector`, and adds indexes for notebook filtering. PostgreSQL runs as one StatefulSet replica; `chat-api` and `ingestion-worker` connect through the `postgres` Service. The chat-api deployment sets `DB_URL` to `jdbc:postgresql://postgres:5432/rag_knowledge`.
 

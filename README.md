@@ -116,16 +116,16 @@ kubectl rollout status deployment/api-gateway --timeout=180s
 
 ### 5. 접속
 
-- 웹 프론트엔드: `http://localhost:30081`
+- 웹 프론트엔드: `http://localhost:8080` (LoadBalancer)
 - API Gateway: `http://localhost:30080`
 
-NodePort에 호스트에서 접근할 수 없다면 포트 포워딩을 사용합니다.
+Docker Desktop Kubernetes에서 LoadBalancer 주소가 할당되면 포트 포워딩 없이 접속할 수 있습니다. Service 상태는 다음 명령으로 확인합니다.
 
 ```powershell
-kubectl port-forward service/web-frontend 8080:8080
+kubectl get service web-frontend
 ```
 
-그 뒤 `http://localhost:8080`을 엽니다. Gateway API를 직접 확인할 때는 다른 터미널에서 `kubectl port-forward service/api-gateway 8081:8080`을 실행한 뒤 `http://localhost:8081`을 사용하세요.
+그 뒤 `http://localhost:8080`을 엽니다. LoadBalancer 주소가 할당되지 않거나 접속할 수 없는 환경에서는 `kubectl port-forward service/web-frontend 8080:8080`을 사용할 수 있습니다. Gateway API를 직접 확인할 때는 다른 터미널에서 `kubectl port-forward service/api-gateway 8081:8080`을 실행한 뒤 `http://localhost:8081`을 사용하세요.
 
 ## API 요약
 
