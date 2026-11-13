@@ -1,0 +1,169 @@
+<mxfile host="Electron" agent="Mozilla/5.0" version="29.0.3">
+  <diagram name="PPT_16x9_Architecture" id="KMhbIE7pPjoWFEqq7GbB">
+    <mxGraphModel dx="1420" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1280" pageHeight="720" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        
+        <!-- Layer 3: Embedding & PostgreSQL Storage Layer (Right) -->
+        <mxCell id="ITEtRGZ7wFlEfQ-BXJZF-1" value="Embedding &amp; PostgreSQL Storage Layer (one StatefulSet + PVC)" style="whiteSpace=wrap;strokeWidth=2;labelPosition=center;verticalLabelPosition=top;align=center;verticalAlign=bottom;fillColor=#f8f9fa;strokeColor=#6c757d;fontStyle=1;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="660" y="95" width="590" height="455" as="geometry" />
+        </mxCell>
+
+        <!-- Layer 2: Microservices Layer (Middle) -->
+        <mxCell id="ITEtRGZ7wFlEfQ-BXJZF-2" value="Microservices Layer" style="whiteSpace=wrap;strokeWidth=2;labelPosition=center;verticalLabelPosition=top;align=center;verticalAlign=bottom;fillColor=#f8f9fa;strokeColor=#6c757d;fontStyle=1;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="395" y="95" width="215" height="455" as="geometry" />
+        </mxCell>
+
+        <!-- Layer 1: API Gateway Layer (Left-Middle) -->
+        <mxCell id="ITEtRGZ7wFlEfQ-BXJZF-3" value="API GATEWAY / ROUTER" style="whiteSpace=wrap;strokeWidth=2;labelPosition=center;verticalLabelPosition=top;align=center;verticalAlign=bottom;fillColor=#f8f9fa;strokeColor=#6c757d;fontStyle=1;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="185" y="160" width="160" height="320" as="geometry" />
+        </mxCell>
+
+        <!-- Client -->
+        <mxCell id="ITEtRGZ7wFlEfQ-BXJZF-4" value="CLIENT&#xa;User / UI" style="rounded=1;whiteSpace=wrap;arcSize=50;strokeWidth=2;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="25" y="290" width="105" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- API Gateway Box -->
+        <mxCell id="ITEtRGZ7wFlEfQ-BXJZF-5" value="API Gateway&#xa;/ Router" style="whiteSpace=wrap;strokeWidth=2;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="200" y="210" width="130" height="220" as="geometry" />
+        </mxCell>
+
+        <!-- Microservices -->
+        <mxCell id="ITEtRGZ7wFlEfQ-BXJZF-6" value="INGESTION SVC&#xa;(내부 문서 파싱)&#xa;Deployment" style="whiteSpace=wrap;strokeWidth=2;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" vertex="1">
+          <mxGeometry x="415" y="130" width="175" height="85" as="geometry" />
+        </mxCell>
+        <mxCell id="ITEtRGZ7wFlEfQ-BXJZF-7" value="CRAWLER SVC&#xa;(외부 문서 수집)&#xa;Deployment" style="whiteSpace=wrap;strokeWidth=2;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" vertex="1">
+          <mxGeometry x="415" y="277" width="175" height="85" as="geometry" />
+        </mxCell>
+        <mxCell id="ITEtRGZ7wFlEfQ-BXJZF-8" value="CHAT / RAG SVC&#xa;(세션 &amp; 답변 생성)&#xa;Deployment" style="whiteSpace=wrap;strokeWidth=2;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" vertex="1">
+          <mxGeometry x="415" y="430" width="175" height="85" as="geometry" />
+        </mxCell>
+
+        <!-- Embedding & DB Tables -->
+        <mxCell id="ITEtRGZ7wFlEfQ-BXJZF-9" value="EMBEDDING PIPELINE&#xa;(Gemini / Text Embedding)" style="whiteSpace=wrap;strokeWidth=2;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="685" y="130" width="215" height="85" as="geometry" />
+        </mxCell>
+        <mxCell id="ITEtRGZ7wFlEfQ-BXJZF-10" value="NOTEBOOKS TABLE (shared)&#xa;- notebook_id UUID PK&#xa;- notebook metadata&#xa;(No user ownership) / PostgreSQL" style="shape=cylinder3;boundedLbl=1;backgroundOutline=1;size=10;strokeWidth=2;whiteSpace=wrap;fillColor=#ffffff;strokeColor=#333333;fontSize=11;" parent="1" vertex="1">
+          <mxGeometry x="965" y="115" width="255" height="115" as="geometry" />
+        </mxCell>
+        <mxCell id="ITEtRGZ7wFlEfQ-BXJZF-11" value="DOCUMENT_CHUNKS TABLE&#xa;- chunk_id UUID PK / notebook_id FK&#xa;- content + embedding (pgvector)&#xa;- source metadata (filename / URL)&#xa;Index notebook_id for filtering" style="shape=cylinder3;boundedLbl=1;backgroundOutline=1;size=10;strokeWidth=2;whiteSpace=wrap;fillColor=#ffffff;strokeColor=#333333;fontSize=11;" parent="1" vertex="1">
+          <mxGeometry x="680" y="340" width="275" height="145" as="geometry" />
+        </mxCell>
+        <mxCell id="Fno6f55a1tamIf9uoZPn-6" value="CHAT_SESSIONS TABLE&#xa;- session_id UUID PK&#xa;- notebook_id UUID FK&#xa;- created_at / PostgreSQL" style="shape=cylinder3;boundedLbl=1;backgroundOutline=1;size=10;strokeWidth=2;whiteSpace=wrap;fillColor=#ffffff;strokeColor=#333333;fontSize=11;" parent="1" vertex="1">
+          <mxGeometry x="985" y="355" width="235" height="115" as="geometry" />
+        </mxCell>
+
+        <!-- Gemini API (Bottom) -->
+        <mxCell id="ITEtRGZ7wFlEfQ-BXJZF-12" value="GEMINI API&#xa;(LLM Model)" style="whiteSpace=wrap;strokeWidth=2;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="742" y="580" width="150" height="65" as="geometry" />
+        </mxCell>
+
+        <!-- Arrows: Client -> Gateway -->
+        <mxCell id="ITEtRGZ7wFlEfQ-BXJZF-13" value="(1) POST /documents" style="curved=1;startArrow=none;endArrow=block;exitX=0.75;exitY=0;entryX=0;entryY=0.15;rounded=0;fontSize=10;" parent="1" source="ITEtRGZ7wFlEfQ-BXJZF-4" target="ITEtRGZ7wFlEfQ-BXJZF-5" edge="1">
+          <mxGeometry x="-0.1" y="12" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="135" y="243" />
+            </Array>
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ITEtRGZ7wFlEfQ-BXJZF-14" value="(2) POST /external-search" style="curved=1;startArrow=none;endArrow=block;exitX=1;exitY=0.5;entryX=0;entryY=0.5;rounded=0;fontSize=10;" parent="1" source="ITEtRGZ7wFlEfQ-BXJZF-4" target="ITEtRGZ7wFlEfQ-BXJZF-5" edge="1">
+          <mxGeometry y="10" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ITEtRGZ7wFlEfQ-BXJZF-15" value="(3) POST /sessions/{id}/chat" style="curved=1;startArrow=none;endArrow=block;exitX=0.75;exitY=1;entryX=0;entryY=0.85;rounded=0;fontSize=10;" parent="1" source="ITEtRGZ7wFlEfQ-BXJZF-4" target="ITEtRGZ7wFlEfQ-BXJZF-5" edge="1">
+          <mxGeometry x="-0.1" y="-14" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="135" y="397" />
+            </Array>
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Arrows: Gateway -> Microservices -->
+        <mxCell id="ITEtRGZ7wFlEfQ-BXJZF-16" value="" style="curved=1;startArrow=none;endArrow=block;exitX=1;exitY=0.15;entryX=0;entryY=0.5;rounded=0;" parent="1" source="ITEtRGZ7wFlEfQ-BXJZF-5" target="ITEtRGZ7wFlEfQ-BXJZF-6" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="370" y="172" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ITEtRGZ7wFlEfQ-BXJZF-17" value="" style="curved=1;startArrow=none;endArrow=block;exitX=1;exitY=0.5;entryX=0;entryY=0.5;rounded=0;" parent="1" source="ITEtRGZ7wFlEfQ-BXJZF-5" target="ITEtRGZ7wFlEfQ-BXJZF-7" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ITEtRGZ7wFlEfQ-BXJZF-18" value="" style="curved=1;startArrow=none;endArrow=block;exitX=1;exitY=0.85;entryX=0;entryY=0.5;rounded=0;" parent="1" source="ITEtRGZ7wFlEfQ-BXJZF-5" target="ITEtRGZ7wFlEfQ-BXJZF-8" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="370" y="472" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Arrows: Microservices -> Storage/Embedding -->
+        <mxCell id="ITEtRGZ7wFlEfQ-BXJZF-19" value="텍스트 추출" style="curved=1;startArrow=none;endArrow=block;exitX=1;exitY=0.4;entryX=0;entryY=0.35;rounded=0;fontSize=10;" parent="1" source="ITEtRGZ7wFlEfQ-BXJZF-6" target="ITEtRGZ7wFlEfQ-BXJZF-9" edge="1">
+          <mxGeometry y="10" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ITEtRGZ7wFlEfQ-BXJZF-20" value="웹 파싱 &amp; 텍스트 추출" style="curved=1;startArrow=none;endArrow=block;exitX=1;exitY=0.35;entryX=0;entryY=0.8;rounded=0;fontSize=10;" parent="1" source="ITEtRGZ7wFlEfQ-BXJZF-7" target="ITEtRGZ7wFlEfQ-BXJZF-9" edge="1">
+          <mxGeometry x="0.1" y="-12" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="635" y="250" />
+            </Array>
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ITEtRGZ7wFlEfQ-BXJZF-23" value="질문 임베딩 후&#xa;notebook_id 필터 검색" style="curved=1;startArrow=none;endArrow=block;exitX=1;exitY=0.3;entryX=0;entryY=0.6;rounded=0;fontSize=10;" parent="1" source="ITEtRGZ7wFlEfQ-BXJZF-8" target="ITEtRGZ7wFlEfQ-BXJZF-11" edge="1">
+          <mxGeometry x="-0.05" y="22" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ITEtRGZ7wFlEfQ-BXJZF-21" value="세션 검증 / notebook_id 확인" style="curved=1;startArrow=none;endArrow=block;exitX=1;exitY=0.85;entryX=0.5;entryY=1;rounded=0;fontSize=10;" parent="1" source="ITEtRGZ7wFlEfQ-BXJZF-8" target="Fno6f55a1tamIf9uoZPn-6" edge="1">
+          <mxGeometry x="-0.15" y="-12" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="830" y="530" />
+              <mxPoint x="1102" y="530" />
+            </Array>
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Arrows: Embedding & DB Internal -->
+        <mxCell id="ITEtRGZ7wFlEfQ-BXJZF-22" value="Vector Array" style="curved=1;startArrow=none;endArrow=block;exitX=0.5;exitY=1;entryX=0.41;entryY=0;rounded=0;fontSize=10;" parent="1" source="ITEtRGZ7wFlEfQ-BXJZF-9" target="ITEtRGZ7wFlEfQ-BXJZF-11" edge="1">
+          <mxGeometry x="-0.1" y="36" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Fno6f55a1tamIf9uoZPn-4" value="notebook_id FK&#xa;ON DELETE CASCADE" style="curved=1;endArrow=classic;html=1;rounded=0;exitX=0.2;exitY=1;entryX=0.75;entryY=0;fontSize=10;" parent="1" source="ITEtRGZ7wFlEfQ-BXJZF-10" target="ITEtRGZ7wFlEfQ-BXJZF-11" edge="1">
+          <mxGeometry x="-0.1" y="-42" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Fno6f55a1tamIf9uoZPn-7" value="notebook_id FK&#xa;ON DELETE CASCADE" style="curved=1;endArrow=classic;html=1;rounded=0;exitX=0.6;exitY=1;entryX=0.55;entryY=0;fontSize=10;" parent="1" source="ITEtRGZ7wFlEfQ-BXJZF-10" target="Fno6f55a1tamIf9uoZPn-6" edge="1">
+          <mxGeometry x="0.1" y="55" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Arrows: Chunks -> Gemini -> Client -->
+        <mxCell id="ITEtRGZ7wFlEfQ-BXJZF-24" value="Top-K Context" style="curved=1;startArrow=none;endArrow=block;exitX=0.5;exitY=1;entryX=0.5;entryY=0;rounded=0;fontSize=10;" parent="1" source="ITEtRGZ7wFlEfQ-BXJZF-11" target="ITEtRGZ7wFlEfQ-BXJZF-12" edge="1">
+          <mxGeometry x="-0.1" y="42" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ITEtRGZ7wFlEfQ-BXJZF-25" value="최종 답변 + 출처" style="curved=1;startArrow=none;endArrow=block;exitX=0;exitY=0.5;entryX=0.5;entryY=1;rounded=0;fontSize=11;fontStyle=1;" parent="1" source="ITEtRGZ7wFlEfQ-BXJZF-12" target="ITEtRGZ7wFlEfQ-BXJZF-4" edge="1">
+          <mxGeometry x="-0.15" y="-12" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="77" y="612" />
+            </Array>
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
